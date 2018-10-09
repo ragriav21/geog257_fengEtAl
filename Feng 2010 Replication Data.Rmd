@@ -49,7 +49,7 @@ library(pacman)
 
 p_load(readr, lubridate, ggplot2, stargazer, fastDummies, pdftools,  
        foreign, pander, knitr, purrr, tidyverse, tidyselect, stringr, 
-       xlsx)
+       xlsx, plm)
 ```
 
 Next, we construct the emigration data using the residual approach mentioned in the [Supplementary Material](http://www.pnas.org/content/pnas/suppl/2010/07/18/1002632107.DCSupplemental/sapp.pdf).  
@@ -103,5 +103,142 @@ annualMeanTemp1995to2000 <-
     20.31, 21.83, 17.45, 18.32, 25.72, 21.07, 25.13, 22.39, 27.20,
     23.62, 14.46, 23.01, 26.36, 17.22)
 
+summerMeanTemp1995to2000 <- 
+  c(21.12, 22.07, 25.56, 27.91, 25.01, 23.77, 25.87, 26.76, 17.80,
+    22.32, 21.38, 26.43, 18.69, 23.49, 16.45, 22.13, 23.52, 27.81,
+    25.28, 23.37, 19.47, 21.28, 27.54, 24.76, 29.10, 27.81, 29.37,
+    28.14, 16.33, 25.82, 28.30, 21.35)
+
+logCornYield2000to2005 <- 
+  c(-0.204, 0.987, 1.631, 0.218, 0.627, 0.944, -0.209, 0.910, 0.428,
+    0.324, 1.044, 0.804, 0.794, 1.474, 1.181, 0.960, 0.855, 1.274,
+    -0.187, 0.198, 0.448, 0.862, -0.951, -0.485, 1.972, 1.436, 0.394,
+    0.665, 0.795, 0.587, -0.426, 0.113)
+
+# Why is the log yield of corn plus wheat lower than the log yield of corn?
+logYieldOfCornPlusWheat2000to2005 <- 
+  c(-0.205, 1.509, 1.647, 0.218, 0.627, 0.974, -0.075, 0.910, 0.428,
+    0.333, 1.125, 0.804, 0.792, 1.474, 1.164, 1.011, 0.859, 1.274, 
+    0.118, 0.190, 0.448, 0.867, -0.951, -0.484, 1.923, 1.590, 0.394, 
+    0.663, 0.779, 0.586, -0.426, 0.113)
+
+ratioOfEmigrants2000to2005 <- 
+  c(0.015, 0.032, -0.006, 0.025, 0.025, 0.055, 0.007, 0.050, 0.013,
+    0.047, 0.051, 0.079, 0.045, 0.035, 0.037, 0.091, 0.060, 0.068, 
+    0.009, 0.061, 0.036, -0.003, -0.049, 0.045, 0.036, 0.010, 0.018,
+    0.016, 0.004, 0.032, -0.014, 0.072)
+
+annualPrecipitation2000to2005 <- 
+  c(0.54, 0.19, 0.18, 1.48, 1.99, 0.42, 0.44, 0.86, 0.77, 0.41, 0.76,
+    1.00, 0.62, 0.78, 0.71, 0.88, 1.04, 1.14, 0.67, 1.54, 1.52, 0.59,
+    1.43, 0.77, 0.62, 0.36, 2.28, 0.81, 0.65, 1.72, 0.92, 0.56)
+
+annualMeanTemp2000to2005 <-
+  c(17.62, 18.76, 22.20, 25.96, 23.84, 18.24, 20.80, 25.71, 15.95, 
+    17.53, 18.19, 25.03, 16.62, 20.53, 14.37, 18.28, 21.24, 24.93, 
+    18.25, 22.57, 17.73, 18.11, 25.59, 21.25, 24.91, 22.43, 26.59, 
+    23.66, 14.45, 23.26, 26.17, 16.90) 
+
+summerMeanTemp2000to2005 <- 
+  c(20.78, 22.74, 25.28, 28.05, 24.80, 24.42, 26.49, 27.10, 17.31,
+    22.05, 20.66, 26.10, 18.59, 23.10, 15.90, 20.33, 22.76, 27.61, 
+    21.95, 23.81, 19.66, 20.16, 27.18, 24.45, 28.91, 28.50, 28.57,
+    27.56, 16.01, 25.78, 28.31, 20.36)
+
+tbl1995to2000 <- 
+  tibble(mexicanState = mexicanState, 
+         timePeriod = timePeriod1995to2000,
+         logCornYield = logCornYield1995to2000,
+         logYieldOfCornPlusWheat = logYieldOfCornPlusWheat1995to2000,
+         ratioOfEmigrants = ratioOfEmigrants1995to2000,
+         annualPrecipitation = annualPrecipitation1995to2000, 
+         annualMeanTemp = annualMeanTemp1995to2000,
+         summerMeanTemp = summerMeanTemp1995to2000)
+
+tbl2000to2005 <- 
+  tibble(mexicanState = mexicanState, 
+         timePeriod = timePeriod2000to2005,
+         logCornYield = logCornYield2000to2005,
+         logYieldOfCornPlusWheat = logYieldOfCornPlusWheat2000to2005,
+         ratioOfEmigrants = ratioOfEmigrants2000to2005,
+         annualPrecipitation = annualPrecipitation2000to2005, 
+         annualMeanTemp = annualMeanTemp2000to2005,
+         summerMeanTemp = summerMeanTemp2000to2005)
+
+dfMXTot <- bind_rows(tbl1995to2000, tbl2000to2005)
+
+```
+
+## Replication
+
+Now we test for a reduced form relationship between climate and migration based on Part 3 of the supplemental data, creating quadratic equations as necessary.
+
+```{r Replicate Reduced-Form Equations}
+# Create additional variables
+dfMXTotEdit <- dfMXTot %>% 
+  mutate(annualPrecipSq = (annualPrecipitation^2),
+         annualMeanTempSq = (annualMeanTemp^2) / 100,
+         summerMeanTempSq = (summerMeanTemp^2) / 100)
+      
+pooledReducedForm <- 
+  plm(ratioOfEmigrants ~ annualPrecipitation + annualPrecipSq + 
+        annualMeanTemp + annualMeanTempSq + summerMeanTemp + 
+        summerMeanTempSq, data = dfMXTotEdit)
+
+summary(pooledReducedForm)
+
+feReducedForm <- 
+  lm(ratioOfEmigrants ~ annualPrecipitation + annualPrecipSq + 
+        annualMeanTemp + annualMeanTempSq + summerMeanTemp + 
+        summerMeanTempSq + factor(mexicanState), data = dfMXTotEdit)
+
+summary(feReducedForm)
+
+```
+
+
+Using the numbers provided and the plm package, we actually get results for the pooled OLS that are different from the reported results in Table S2. The results are closer when we run Fixed Effects, even though the estimates are still slightly off here.
+
+Manually running a two-stage least squares fixed effects estimate, we obtain the following:
+
+```{r FE-TSLS}
+# For Corn only
+firstStageCorn <- 
+  lm(logCornYield ~ annualPrecipitation + annualPrecipSq + 
+        annualMeanTemp + annualMeanTempSq + summerMeanTemp + 
+        summerMeanTempSq, data = dfMXTotEdit)
+
+# For Corn + Wheat
+firstStageCornPlusWheat <- 
+  lm(logYieldOfCornPlusWheat ~ annualPrecipitation + annualPrecipSq + 
+        annualMeanTemp + annualMeanTempSq + summerMeanTemp + 
+        summerMeanTempSq, data = dfMXTotEdit)
+
+dfMXTotEdit2 <- dfMXTotEdit %>% 
+  mutate(logCornYieldIV = firstStageFECorn$fitted.values,
+         logYieldOfCornPlusWheatIV = firstStageCornPlusWheat$fitted.values)
+
+#Corn
+secondStageCornFE <- 
+  lm(ratioOfEmigrants ~ logCornYieldIV + factor(mexicanState),
+     data = dfMXTotEdit2)
+
+secondStageCornPLM <- 
+  plm(ratioOfEmigrants ~ logCornYieldIV,
+     data = dfMXTotEdit2)
+
+#Corn + Wheat
+secondStageCornPlusWheatFE <- 
+  lm(ratioOfEmigrants ~ logYieldOfCornPlusWheatIV + factor(mexicanState),
+     data = dfMXTotEdit2)
+
+secondStageCornPlusWheatPLM <- 
+  plm(ratioOfEmigrants ~ logYieldOfCornPlusWheatIV,
+     data = dfMXTotEdit2)
+
+results <- list(secondStageCornFE, secondStageCornPLM,
+                secondStageCornPlusWheatFE, secondStageCornPlusWheatPLM)
+
+map(results, summary)
 
 ```
