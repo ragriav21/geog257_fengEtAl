@@ -9,7 +9,9 @@ output: html_document
 
 ## Objective
 
-Our objective was to reproduce, as much as possible and given the supplementary material, the results of the Feng et al paper, which can be found summarized in Table 1 (14258), with robustness checks in Table 2 (14259)
+Our objective was to reproduce, as much as possible and given the supplementary material, the results of the Feng et al paper, which can be found summarized in Table 1 (14258), with robustness checks in Table 2 (14259).  Table 1 is displayed below:
+
+![](Table1.PNG)
 
 
 ## Progress and Stumbling Blocks
