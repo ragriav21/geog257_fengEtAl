@@ -38,3 +38,12 @@ library(pacman)
 
 p_load(readr, lubridate, ggplot2, stargazer, fastDummies, 
        foreign, pander, knitr, purrr, tidyverse, tidyselect)
+```
+
+Next, we construct the emigration data using the residual approach mentioned in the [Supplementary Material](http://www.pnas.org/content/pnas/suppl/2010/07/18/1002632107.DCSupplemental/sapp.pdf).  
+
+```{r Create Emigration Data}
+
+
+
+```
