@@ -1,8 +1,11 @@
 ---
-title: "Replication of: Feng et al (2010), Linkages among climate change, crop yields, and Mexico-US cross-border migration"
+title: 'Replication of: Feng et al (2010), Linkages among climate change, crop yields,
+  and Mexico-US cross-border migration'
 author: "Rafael Grillo Avila, Sol Kim, Catherine Ledna, & Samira Siddique"
 date: "October 8, 2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 # Executive Summary / Write-Up
@@ -22,9 +25,9 @@ The second stumbling block came when trying to download the emigration data from
 
 1. First, we manually type in the data presented in “Table S1. Data for Each Mexican State,” presented below:
 
-![](TableS1A.PNG)
+![](Table S1A.PNG)
 
-![](TableS1B.PNG)
+![](Table S1B.PNG)
 
 2. Second, we download data from Mexico’s [National Institute of Statistics and Geography](http://www.beta.inegi.org.mx/proyectos/ccpv/2000/default.html), abbreviated INEGI based on the Spanish spelling.  We obtain data from each of the “Censo General de Población y Vivienda” (General Population and Housing Census) 1995, 2000, and 2005 (XI, XII, and XIII), and navigate to “Tabulados” (Tabulations) and filter the results by “Interactivos (cubos)” (cubed interactive groups) and “Area Geográfica” “Nacional y Entidad Federativa” (Geography: National and State).  Then we run a consultation on “Poblacion total con estimación” (Total population with estimation) by “Entidad municipio y loc” (Municipal entity and locale) and “Edad quinquenal” (Age by five-year groupings).  We then export the results to .csv, clean the data by eliminating non-data rows and columns, and import into R.  We are able to obtain total population data this way.  However, we realize that obtaining the data for projections of death rates and for migration turns out to be too time-consuming and death rates too unclear that we resort to using the first method described above to test the regression part of the analysis first.
 
@@ -37,7 +40,7 @@ It is interesting to note that the log yield of corn plus wheat for Veracruz was
 
 We first test for a reduced form relationship between climate and migration based on Part 3 of the supplemental data, creating quadratic equations as necessary.  Using the numbers provided and the plm package, we actually get results for the pooled OLS that are different from the reported results in Table S2. The results are closer when we run Fixed Effects, even though the estimates are still slightly off here.
 
-Turning our attention to testing the two-stage least squares, with both fixed effects and without, we get a result that is an order of magnitude lower and statistically insignificant, though in the same general direction as the results of the main study. 
+Turning our attention to testing the two-stage least squares, with both fixed effects and without, we get results that are generally an order of magnitude lower and statistically insignificant, though in the same general direction as the results of the main study.
 
 
 # Code
@@ -222,7 +225,7 @@ firstStageCornPlusWheat <-
         summerMeanTempSq, data = dfMXTotEdit)
 
 dfMXTotEdit2 <- dfMXTotEdit %>% 
-  mutate(logCornYieldIV = firstStageFECorn$fitted.values,
+  mutate(logCornYieldIV = firstStageCorn$fitted.values,
          logYieldOfCornPlusWheatIV = firstStageCornPlusWheat$fitted.values)
 
 #Corn
@@ -249,3 +252,5 @@ results <- list(secondStageCornFE, secondStageCornPLM,
 map(results, summary)
 
 ```
+
+With both fixed effects and without, we get results that are generally an order of magnitude lower and statistically insignificant, though in the same general direction as the results of the main study.
