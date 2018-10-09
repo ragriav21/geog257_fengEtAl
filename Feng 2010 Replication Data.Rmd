@@ -4,8 +4,8 @@ title: 'Replication of: Feng et al (2010), Linkages among climate change, crop y
 author: "Rafael Grillo Avila, Sol Kim, Catherine Ledna, & Samira Siddique"
 date: "October 8, 2018"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 # Executive Summary / Write-Up
@@ -230,7 +230,7 @@ dfMXTotEdit2 <- dfMXTotEdit %>%
 
 #Corn
 secondStageCornFE <- 
-  lm(ratioOfEmigrants ~ logCornYieldIV + factor(mexicanState),
+  lm(ratioOfEmigrants ~ logCornYieldIV + factor(mexicanState) + factor(timePeriod),
      data = dfMXTotEdit2)
 
 secondStageCornPLM <- 
@@ -239,7 +239,7 @@ secondStageCornPLM <-
 
 #Corn + Wheat
 secondStageCornPlusWheatFE <- 
-  lm(ratioOfEmigrants ~ logYieldOfCornPlusWheatIV + factor(mexicanState),
+  lm(ratioOfEmigrants ~ logYieldOfCornPlusWheatIV + factor(mexicanState) + factor(timePeriod),
      data = dfMXTotEdit2)
 
 secondStageCornPlusWheatPLM <- 
