@@ -18,8 +18,19 @@ Our objective was to reproduce, as much as possible and given the supplementary 
 
 First, given all the papers we’ve read with data and scripts that were, however flawed, available online, it was surprising to see that this was not the case for the paper.  Although the supplementary material was much appreciated, as it makes it easier to understand the context of the data, it is impossible to know whether one was taking the same steps as the authors without having access to the code the authors used itself.
 
+The second stumbling block came when trying to download the emigration data from the website of [Integrated Public Use Microdata Series - International (IPUMS)](https://international.ipums.org/international/).  Unfortunately, downloading data from the website required creating an account that is still pending approval.  We therefore proceed using two methods:
+
+1. First, we manually type in the data presented in “Table S1. Data for Each Mexican State,” presented below:
+
+![](TableS1A.PNG)
+
+![](TableS1B.PNG)
+
+2. Second, we download data from Mexico’s [National Institute of Statistics and Geography](http://www.beta.inegi.org.mx/proyectos/ccpv/2000/default.html), abbreviated INEGI based on the Spanish spelling.  We obtain data from each of the “Censo General de Población y Vivienda” (General Population and Housing Census) 1995, 2000, and 2005 (XI, XII, and XIII), and navigate to “Tabulados” (Tabulations) and filter the results by “Interactivos (cubos)” (cubed interactive groups) and “Area Geográfica” “Nacional y Entidad Federativa” (Geography: National and State).  Then we run a consultation on “Poblacion total con estimación” (Total population with estimation) by “Entidad municipio y loc” (Municipal entity and locale) and “Edad quinquenal” (Age by five-year groupings).  We then export the results to .csv, clean the data by eliminating non-data rows and columns, and import into R.  We are able to obtain total population data this way.  However, we realize that obtaining the data for projections of death rates and for migration turns out to be too time-consuming and death rates too unclear that we resort to using the first method described above to test the regression part of the analysis first.
+
 
 ## Results
+
 
 
 # Code
@@ -36,14 +47,61 @@ knitr::opts_chunk$set(set.seed(123456789))
 # install.packages("pacman")
 library(pacman)
 
-p_load(readr, lubridate, ggplot2, stargazer, fastDummies, 
-       foreign, pander, knitr, purrr, tidyverse, tidyselect)
+p_load(readr, lubridate, ggplot2, stargazer, fastDummies, pdftools,  
+       foreign, pander, knitr, purrr, tidyverse, tidyselect, stringr, 
+       xlsx)
 ```
 
 Next, we construct the emigration data using the residual approach mentioned in the [Supplementary Material](http://www.pnas.org/content/pnas/suppl/2010/07/18/1002632107.DCSupplemental/sapp.pdf).  
 
-```{r Create Emigration Data}
+We try to obtain population and emigration data from the [Integrated Public Use Microdata Series - International (IPUMS)](https://international.ipums.org/international/), but, failing that, obtain it from .csv files downloaded from Mexico’s [National Institute of Statistics and Geography](http://www.beta.inegi.org.mx/proyectos/ccpv/2000/default.html) (INEGI).  
 
+```{r Load Emigration Data}
+
+# Download 1995 - 2005 total population by state and age group
+popMX1995 <- read_csv("INEGI_Exporta_20181009014955_1995.csv")
+popMX2000 <- read_csv("INEGI_Exporta_20181009020938_2000.csv")
+popMX2005 <- read_csv("INEGI_Exporta_20181009021100_2005.csv")
+
+```
+
+Since we only obtain population data in this manner, we resort to manually copying the data from the PDF file.  We copy both the emigration data and the crop data in this way to test the regressions, and then return to trying to construct the dataset from the sources provided.
+
+```{r Manual Dataset}
+# Hand-writing Table S1 data for 1995-2000 and 2000-2005
+mexicanState <- c("Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", "Coahuila", "Colima", "Distrito Federal", "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "Mexico", "Michoacan", "Morelos", "Nayarit", "Nuevo Leon", "Oaxaca", "Puebla", "Queretaro", "Quintana Roo", "San Luis Potosi", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatan", "Zacatecas")
+
+timePeriod1995to2000 <- rep("1995-2000", length(mexicanState))
+timePeriod2000to2005 <- rep("2000-2005", length(mexicanState))
+
+logCornYield1995to2000 <- 
+  c(-0.020, 0.893, 1.465, 0.182, 0.581, 0.685, -0.297, 0.837, 0.505, 
+    0.115, 0.612, 0.762, 0.504, 1.191, 1.247, 0.796, 0.750, 1.034,
+    -0.452, 0.178, 0.409, 0.424, -0.764, -0.503, 1.719, 1.545, 0.173,
+    0.572, 0.514, 0.492, -0.421, -0.228)
+
+logYieldOfCornPlusWheat1995to2000 <- 
+  c(-0.018, 1.549, 1.472, 0.182, 0.581, 0.757, 0.010, 0.837, 0.505, 
+    0.179, 0.928, 0.762, 0.514, 1.207, 1.223, 0.891, 0.755, 1.034,
+    -0.297, 0.174, 0.418, 0.457, -0.764, -0.503, 1.686, 1.663, 0.173,
+    0.499, 0.586, 0.491, -0.421, -0.213)
+
+ratioOfEmigrants1995to2000 <- 
+  c(0.084, 0.064, 0.040, 0.050, 0.060, 0.073, 0.062, 0.044, 0.023, 
+    0.101, 0.101, 0.076, 0.084, 0.080, 0.032, 0.115, 0.081, 0.093,
+    0.053, 0.059, 0.043, 0.071, 0.041, 0.082, 0.062, 0.069, 0.036,
+    0.079, 0.068, 0.059, 0.044, 0.120)
+
+annualPrecipitation1995to2000 <- 
+  c(0.37, 0.21, 0.18, 1.41, 1.77, 0.35, 0.35, 0.85, 0.76, 0.34, 0.56,
+    0.91, 0.68, 0.62, 0.57, 0.63, 0.98, 1.21, 0.48, 1.66, 1.84, 0.40,
+    1.42, 0.76, 0.60, 0.33, 2.37, 0.68, 0.84, 1.60, 0.96, 0.46)
+
+annualMeanTemp1995to2000 <-
+  c(17.52, 18.84, 22.46, 26.13, 23.84, 17.53, 19.95, 25.12, 15.85,
+    17.36, 18.41, 25.12, 16.41, 20.54, 14.47, 19.68, 21.75, 25.11,
+    20.31, 21.83, 17.45, 18.32, 25.72, 21.07, 25.13, 22.39, 27.20,
+    23.62, 14.46, 23.01, 26.36, 17.22)
 
 
 ```
