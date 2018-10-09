@@ -160,9 +160,10 @@ $(document).ready(function () {
 </div>
 <div id="results" class="section level2">
 <h2>Results</h2>
+<p>The attempt at replication can be found in <a href="https://github.com/ragriav21/geog257_fengEtAl">this github page</a></p>
 <p>It is interesting to note that the log yield of corn plus wheat for Veracruz was lower than the log yield of just corn for the years 2000 to 2005. This calls into question the data presented in the charts, and emphasizes the need for current or future replication attempts to really get to the source.</p>
 <p>We first test for a reduced form relationship between climate and migration based on Part 3 of the supplemental data, creating quadratic equations as necessary. Using the numbers provided and the plm package, we actually get results for the pooled OLS that are different from the reported results in Table S2. The results are closer when we run Fixed Effects, even though the estimates are still slightly off here.</p>
-<p>Turning our attention to testing the two-stage least squares, with both fixed effects and without, we get results that are generally an order of magnitude lower and statistically insignificant, though in the same general direction as the results of the main study.</p>
+<p>Turning our attention to testing the two-stage least squares, with both fixed effects and without, we get results that are generally an order of magnitude lower and statistically insignificant, though in the same general direction as the results of the main study. We get the same result of fixed effects with time reported on the paper when we don’t include time fixed effects, and the effect drops by an order of magnitude again once time effect fixed effects.</p>
 </div>
 </div>
 <div id="code" class="section level1">
@@ -928,7 +929,7 @@ map(results, summary)</code></pre>
 ## R-Squared:      0.0017359
 ## Adj. R-Squared: -1.0287
 ## F-statistic: 0.0539051 on 1 and 31 DF, p-value: 0.81793</code></pre>
-<p>With both fixed effects and without, we get results that are generally an order of magnitude lower and statistically insignificant, though in the same general direction as the results of the main study.</p>
+<p>With both fixed effects and without, we get results that are generally an order of magnitude lower and statistically insignificant, though in the same general direction as the results of the main study. We get the same result of fixed effects with time reported on the paper when we don’t include time fixed effects, and the effect drops by an order of magnitude again once time effect fixed effects.</p>
 </div>
 </div>
 
