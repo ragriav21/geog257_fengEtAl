@@ -1,30 +1,38 @@
 ---
-title: "Feng et al (2010) Replication"
-author: "Rafael Grillo Avila"
+title: "Replication of: Feng et al (2010), Linkages among climate change, crop yields, and Mexico-US cross-border migration"
+author: "Rafael Grillo Avila, Sol Kim, Catherine Ledna, & Samira Siddique"
 date: "October 8, 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# Executive Summary / Write-Up
 
-## R Markdown
+## Objective
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Our objective was to reproduce, as much as possible and given the supplementary material, the results of the Feng et al paper, which can be found summarized in Table 1 (14258), with robustness checks in Table 2 (14259)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
-```
+## Progress and Stumbling Blocks
 
-## Including Plots
+First, given all the papers we’ve read with data and scripts that were, however flawed, available online, it was surprising to see that this was not the case for the paper.  Although the supplementary material was much appreciated, as it makes it easier to understand the context of the data, it is impossible to know whether one was taking the same steps as the authors without having access to the code the authors used itself.
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+## Results
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+# Code
+
+## Setup
+
+Begin by loading the required packages and data, and defining necessary project settings.
+
+```{r Setup}
+# Set seed
+knitr::opts_chunk$set(set.seed(123456789))
+
+# Install and load useful libraries
+# install.packages("pacman")
+library(pacman)
+
+p_load(readr, lubridate, ggplot2, stargazer, fastDummies, 
+       foreign, pander, knitr, purrr, tidyverse, tidyselect)
